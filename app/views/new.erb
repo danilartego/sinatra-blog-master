@@ -1,16 +1,17 @@
-<h3>Новый Пост</h3>
+<h3><%= @title%></h3>
 
 <form action="/new" method="POST">
 
-<div class="mb-3">
-  <label class="form-label">Имя</label>
-  <input type="text" class="form-control" placeholder="Имя">
-</div>
-<div class="mb-3">
-  <label class="form-label">Тест поста</label>
-  <textarea class="form-control" rows="3" placeholder="Напиши текст сдесь"></textarea>
-</div>
+  <div class="mb-3">
+    <label class="form-label">Название поста</label>
+    <input name="post_title" type="text" class="form-control" placeholder="Название поста" style="width: 400px;">
+  </div>
+  <div class="mb-3">
+    <label class="form-label">Тест поста</label>
+    <textarea name="post_body" class="form-control" rows="3" placeholder="Напиши текст сдесь" style="width: 400px; height: 200px"></textarea>
+  </div>
 
-  <button type="button" class="btn btn-primary">Отправить</button>
+  <button class="btn btn-primary" type="submit">Отправить</button>
+
 
 </form>

@@ -1,13 +1,16 @@
-<h3>Write your text:</h3>
+<h3>Новый Пост</h3>
 
 <form action="/new" method="POST">
 
-  <p><label for="post_title">Title:</label></p>
-  <p><input type="text" name="post_title"></p>
+<div class="mb-3">
+  <label for="exampleFormControlInput1" class="form-label">Имя</label>
+  <input type="email" class="form-control" id="exampleFormControlInput1" placeholder="Имя">
+</div>
+<div class="mb-3">
+  <label for="exampleFormControlTextarea1" class="form-label">Тест поста</label>
+  <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+</div>
 
-  <p><label for="post_body">Content:</label></p>
-  <p><textarea name="post_body" cols="80" rows="10"></textarea></p>
-
-  <p><input type="submit" value="Save post"></p>
+  <button type="button" class="btn btn-primary">Отправить</button>
 
 </form>

@@ -1,0 +1,22 @@
+<% if @posts.size == 0 %>
+  <%= "<p>No messages</p>" %>
+<% end %>
+
+<table border="1" cellpadding="10" cellspacing="1">
+  <tr>
+    <th>id</th>
+    <th>Title</th>
+    <th>Update post</th>
+    <th>Delete post</th>
+  </tr>
+
+<% @posts.each do |post| %>
+  <tr>
+    <td><%= post['id'] %></td>
+    <td><%= post['post_title'] %></td>
+    <td>update</td>
+    <td>delete</td>
+  </tr>
+<% end %>
+
+</table>

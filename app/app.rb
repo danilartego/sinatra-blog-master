@@ -35,10 +35,17 @@ end
 get '/' do
   @title = 'Our blog'
 
-  get_posts
-
   erb :index
 end
+
+get '/posts' do
+  @title = 'Our blog'
+
+  get_posts
+
+  erb :posts
+end
+
 
 get '/new' do
   @title = 'New post'

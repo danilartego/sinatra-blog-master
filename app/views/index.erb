@@ -1,12 +1,1 @@
-<% if @posts.size == 0 %>
-  <%= "No messages" %>
-<% end %>
-
-
-<% @posts.each do |post| %>
-  <h3><%= post['post_title'] %></h3>
-
-  <p><%= post['post_body'] %></p>
-
-  <hr>
-<% end %>
+<%= @title %>

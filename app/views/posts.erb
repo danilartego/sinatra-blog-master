@@ -1,0 +1,36 @@
+<h2 class="mb-3">Посты</h2>
+
+<% if @posts.size == 0 %>
+  <%= "No messages" %>
+<% end %>
+
+<% @posts.each_with_index do |post| %>
+<div class="card mb-3" style="max-width: 100%; height: auto;">
+  <div class="row g-0">
+    <div class="col-md-4">
+      <img src="https://storage.yandexcloud.net/notion-images/images/getImage%20(<%= post["id"] %>).jpg" 
+            class="img-fluid rounded-start" alt="...">
+    </div>
+    <div class="col-md-8">
+      <div class="card-body">
+        <h5 class="card-title"><%= post["post_title"] %></h5>
+        <p class="card-text"><%= post["post_body"] %></p>
+
+        <p class="card-text">
+          <small class="text-body-secondary">
+            <%= "Создание: #{post["created_date"]}" %><br>
+            <%= "Обновление: ..." %>
+          </small>
+        </p>
+
+        <p class="card-text">
+          <small class="text-body-secondary">
+            <a href="details/<%= post["id"] %>">Добавить комментарий</a>
+          </small>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+  
+<% end %>

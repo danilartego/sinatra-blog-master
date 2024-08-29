@@ -1,0 +1,67 @@
+<h2 class="mb-3"> <%= @title %> </h2>
+
+<div class="card mb-3">
+  <div class="row g-0">
+    <div class="col-md-4">
+      <img src="https://storage.yandexcloud.net/notion-images/images/getImage%20(<%= @row_post["id"] %>).jpg" 
+      class="img-fluid rounded-start" alt="...">
+    </div>
+
+    <div class="col-md-8">
+      <div class="card-body">
+        <h5 class="card-title"><%= @row_post["post_title"] %></h5>
+        <p class="card-text"><%= @row_post["post_body"] %></p>
+
+        <p class="card-text">
+          <small class="text-body-secondary" style="font-size: 75%; color: #999">
+            <%= "Создание: #{@row_post["created_date"]}" %><br>
+            <%= "Обновление: ..." %><br>
+            <%= "Автор: #{@row_users.find { |user| user["post_id"] == @row_post["id"] }["username"]}" %>
+          </small>
+
+        </p>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<h4>Добавить комментарий:</h4 >
+
+<form action="/details/<%= @row_post["id"] %>" method="POST">
+
+  <label class="form-label">Имя или почта</label>
+    <input name="username" 
+            type="text" 
+            class="form-control" 
+            placeholder="Имя пользователя" 
+            style="width: 400px;">
+  </div>
+
+
+  <div class="mb-3">
+    <label class="form-label">Тест комментария</label>
+    <textarea name="comment_body" 
+              class="form-control" 
+              rows="3"
+              placeholder="Напиши текст сдесь"
+              style="height: 200px"></textarea>
+  </div>
+
+  <button class="btn btn-primary" type="submit">Добавить комментарий</button>
+
+</form>
+<br><br>
+
+<h4>Комментарии:</h4 >
+
+<% @comments.each do |comment| %>
+<p>
+  <%= comment["comment_body"] %><br>
+    <small class="text-body-secondary" style="font-size: 75%; color: #999">
+      <%= comment["created_date"] %><br>
+      <%= @users.find { |user| user["comment_id"] == comment["id"] }["username"] %>
+    </small>
+    <hr>
+</p>
+<% end %>

@@ -1,14 +1,31 @@
-<h3 class="mb-3"><%= @title%></h3>
+<h3 class="mb-3"><%= @title %></h3>
 
 <form action="/new" method="POST">
 
   <div class="mb-3">
+    <label class="form-label">Имя или почта</label>
+    <input name="username" 
+            type="text" 
+            class="form-control" 
+            placeholder="Имя пользователя" 
+            style="width: 400px;">
+  </div>
+
+  <div class="mb-3">
     <label class="form-label">Название поста</label>
-    <input name="post_title" type="text" class="form-control" placeholder="Название поста" style="width: 400px;">
+    <input name="post_title" 
+            type="text" 
+            class="form-control" 
+            placeholder="Название поста" 
+            style="width: 400px;">
   </div>
   <div class="mb-3">
     <label class="form-label">Тест поста</label>
-    <textarea name="post_body" class="form-control" rows="3" placeholder="Напиши текст сдесь" style="width: 400px; height: 200px"></textarea>
+    <textarea name="post_body" 
+              class="form-control" 
+              rows="3" 
+              placeholder="Напиши текст здесь" 
+              style="width: 400px; height: 200px"></textarea>
   </div>
 
   <button class="btn btn-primary" type="submit">Отправить</button>

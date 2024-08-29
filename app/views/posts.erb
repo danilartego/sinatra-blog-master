@@ -2,19 +2,29 @@
   <%= "No messages" %>
 <% end %>
 
-<% @posts.each_with_index do |post, i| %>
-<% i += 1 %>
-<div class="card mb-3" style="max-width: 540px;">
+<% @posts.each_with_index do |post| %>
+<div class="card mb-3" style="max-width: 800px;">
   <div class="row g-0">
     <div class="col-md-4">
-      <img src="https://storage.yandexcloud.net/notion-images/images/getImage%20(<%= i %>).jpg" class="img-fluid rounded-start" alt="...">
+      <img src="https://storage.yandexcloud.net/notion-images/images/getImage%20(<%= post["id"] %>).jpg" class="img-fluid rounded-start" alt="...">
     </div>
     <div class="col-md-8">
       <div class="card-body">
         <h5 class="card-title"><%= post["post_title"] %></h5>
         <p class="card-text"><%= post["post_body"] %></p>
-        <p class="card-text"><small class="text-body-secondary"><%= "Создание: #{post["created_date"]}" %></small></p>
-        <p class="card-text"><small class="text-body-secondary"><%= "Обновление: ..." %></small></p>
+
+        <p class="card-text">
+          <small class="text-body-secondary">
+            <%= "Создание: #{post["created_date"]}" %><br>
+            <%= "Обновление: ..." %>
+          </small>
+        </p>
+
+        <p class="card-text">
+          <small class="text-body-secondary">
+            <a href="details/<%= post["id"] %>">Comments</a>
+          </small>
+        </p>
       </div>
     </div>
   </div>

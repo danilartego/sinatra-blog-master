@@ -1,0 +1,24 @@
+<h3 class="mb-3"> <%= @title %> </h3>
+
+<div class="card mb-3" style="max-width: 800px;">
+  <div class="row g-0">
+    <div class="col-md-4">
+      <img src="https://storage.yandexcloud.net/notion-images/images/getImage%20(<%= @row["id"] %>).jpg" 
+      class="img-fluid rounded-start" alt="...">
+    </div>
+
+    <div class="col-md-8">
+      <div class="card-body">
+        <h5 class="card-title"><%= @row["post_title"] %></h5>
+        <p class="card-text"><%= @row["post_body"] %></p>
+
+        <p class="card-text">
+          <small class="text-body-secondary">
+            <%= "Создание: #{@row["created_date"]}" %><br>
+            <%= "Обновление: ..." %>
+          </small>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>

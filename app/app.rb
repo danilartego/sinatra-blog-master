@@ -13,12 +13,12 @@ def get_db
   return @db
 end
 
-# Получение данных из базы
-def get_posts
-  get_db
-  @posts = @db.execute "SELECT * FROM Posts"
-  @db.close
-end
+# # Получение данных из базы
+# def get_posts
+#   get_db
+#   @posts = @db.execute "SELECT * FROM Posts"
+#   @db.close
+# end
 
 # Конфигурация сервера приложения
 configure do
@@ -45,7 +45,8 @@ end
 get "/posts" do
   @title = "Our blog"
 
-  get_posts
+  get_db
+  @posts = @db.execute "SELECT * FROM Posts order by id desc"
 
   erb :posts
 end
@@ -85,7 +86,23 @@ end
 get "/admin" do
   @title = "Admin Panel"
 
-  get_posts
+  get_db
+  @posts = @db.execute "SELECT * FROM Posts"
+  @db.close
 
   erb :admin
+end
+
+# Пост с коментариями
+get "/details/:post_id" do
+  @title = "Детали поста с комментариями"
+  post_id = params[:post_id]
+
+  # # Выбираем один пост
+  get_db
+  results = @db.execute "select * from Posts where id = ?", [post_id]
+
+  @row = results[0]
+
+  erb :details
 end

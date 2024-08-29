@@ -1,6 +1,6 @@
-require 'sinatra'
-require 'sinatra/reloader'
-require 'sqlite3'
+require "sinatra"
+require "sinatra/reloader"
+require "sqlite3"
 
 # TODO:
 # update post
@@ -8,7 +8,7 @@ require 'sqlite3'
 
 # Получение базы данных
 def get_db
-  @db = SQLite3::Database.new 'base.db'
+  @db = SQLite3::Database.new "base.db"
   @db.results_as_hash = true
   return @db
 end
@@ -16,7 +16,7 @@ end
 # Получение данных из базы
 def get_posts
   get_db
-  @posts = @db.execute 'SELECT * FROM Posts'
+  @posts = @db.execute "SELECT * FROM Posts"
   @db.close
 end
 
@@ -27,6 +27,7 @@ configure do
   @db.execute 'CREATE TABLE IF NOT EXISTS "Posts"
     (
       "id" INTEGER PRIMARY KEY AUTOINCREMENT,
+      "created_date" DATE,
       "post_title" TEXT,
       "post_body" TEXT
     )'
@@ -34,15 +35,15 @@ configure do
 end
 
 # Главная страница
-get '/' do
-  @title = 'Our blog'
+get "/" do
+  @title = "Our blog"
 
   erb :index
 end
 
 # Страница с постами
-get '/posts' do
-  @title = 'Our blog'
+get "/posts" do
+  @title = "Our blog"
 
   get_posts
 
@@ -50,16 +51,16 @@ get '/posts' do
 end
 
 # Страница с новым постом
-get '/new' do
-  @title = 'New post'
+get "/new" do
+  @title = "New post"
   erb :new
 end
 
 # Создание и сохранение нового поста
-post '/new' do
+post "/new" do
 
   # Параметры поста
-  @title = 'Создание нового поста'
+  @title = "Создание нового поста"
   @post_title = params[:post_title]
   @post_body = params[:post_body]
 
@@ -71,14 +72,17 @@ post '/new' do
 
   # Сохранение поста
   get_db
-  @db.execute 'INSERT INTO Posts (post_title, post_body) VALUES (?, ?)', [@post_title, @post_body]
+  @db.execute "INSERT INTO 
+              Posts (post_title, post_body, created_date) 
+              VALUES (?, ?, datetime())",
+              [@post_title, @post_body]
   @db.close
 
   erb :posted
 end
 
 # Страница админ панели
-get '/admin' do
+get "/admin" do
   @title = "Admin Panel"
 
   get_posts

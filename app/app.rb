@@ -47,7 +47,7 @@ end
 
 # Главная страница
 get "/" do
-  @title = "Our blog"
+  @title = "Наш блог"
 
   erb :index
 end
@@ -64,7 +64,7 @@ end
 
 # Страница с новым постом
 get "/new" do
-  @title = "New post"
+  @title = "Новый пост"
   erb :new
 end
 
@@ -90,12 +90,13 @@ post "/new" do
               [@post_title, @post_body]
   @db.close
 
-  erb :posted
+  # erb :posted
+  redirect to '/posts'
 end
 
 # Страница админ панели
 get "/admin" do
-  @title = "Admin Panel"
+  @title = "Панель администратора"
 
   get_db
   @posts = @db.execute "SELECT * FROM Posts"

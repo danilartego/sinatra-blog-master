@@ -1,6 +1,6 @@
 <h3 class="mb-3"> <%= @title %> </h3>
 
-<div class="card mb-3" style="max-width: 800px;">
+<div class="card mb-3">
   <div class="row g-0">
     <div class="col-md-4">
       <img src="https://storage.yandexcloud.net/notion-images/images/getImage%20(<%= @row["id"] %>).jpg" 
@@ -24,32 +24,33 @@
   </div>
 </div>
 
-<h4>Комментарии:</h4 >
+<h4>Добавить комментарий:</h4 >
 
 <form action="/details/<%= @row["id"] %>" method="POST">
 
   <div class="mb-3">
     <label class="form-label">Тест комментария</label>
-    <textarea name="comment_body" class="form-control" rows="3" style="width: 400px; height: 200px">
+    <textarea name="comment_body" 
+              class="form-control" 
+              rows="3"
+              placeholder="Напиши текст сдесь"
+              style="height: 200px">
     </textarea>
   </div>
 
   <button class="btn btn-primary" type="submit">Добавить комментарий</button>
 
 </form>
-<br>
+<br><br>
+<h4>Комментарии:</h4 >
 
-<div class="card mb-3" style="max-width: 800px;">
-    <div class="col-md-8">
-      <div class="card-body">
+
         <% @comments.each do |comment| %>
         <p>
-        <small class="text-body-secondary">
-          <%= comment["created_date"] %>
-        </small><br>
-          <%= comment["comment_body"] %>
+          <%= comment["comment_body"] %><br>
+            <span style="font-size: 75%; color: #999">
+              <%= comment["created_date"] %>
+            </span>
+            <hr>
         </p>
         <% end %>
-      </div>
-    </div>
-</div>

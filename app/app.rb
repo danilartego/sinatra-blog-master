@@ -96,13 +96,26 @@ end
 # Пост с коментариями
 get "/details/:post_id" do
   @title = "Детали поста с комментариями"
+
+  # Получаем переменную из URL
   post_id = params[:post_id]
 
-  # # Выбираем один пост
+  # Открываем базу
   get_db
-  results = @db.execute "select * from Posts where id = ?", [post_id]
 
+  # Выбираем один пост
+  results = @db.execute "select * from Posts where id = ?", [post_id]
   @row = results[0]
 
   erb :details
+end
+
+post "/details/:post_id" do
+  # Получаем переменную из URL
+  post_id = params[:post_id]
+
+  # Получаем переменную из формы
+  @comment = params[:comment_body]
+
+  erb "Comment added to post #{post_id}: #{@comment}"
 end

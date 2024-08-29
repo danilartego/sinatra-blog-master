@@ -6,20 +6,21 @@ require 'sqlite3'
 # update post
 # destroy post
 
-# Method connect with database
+# Получение базы данных
 def get_db
   @db = SQLite3::Database.new 'base.db'
   @db.results_as_hash = true
   return @db
 end
 
+# Получение данных из базы
 def get_posts
   get_db
   @posts = @db.execute 'SELECT * FROM Posts'
   @db.close
 end
 
-# Configure application
+# Конфигурация сервера приложения
 configure do
   get_db
   # create table Messages in database
@@ -32,12 +33,14 @@ configure do
   @db.close
 end
 
+# Главная страница
 get '/' do
   @title = 'Our blog'
 
   erb :index
 end
 
+# Страница с постами
 get '/posts' do
   @title = 'Our blog'
 
@@ -46,17 +49,27 @@ get '/posts' do
   erb :posts
 end
 
-
+# Страница с новым постом
 get '/new' do
   @title = 'New post'
   erb :new
 end
 
+# Создание и сохранение нового поста
 post '/new' do
-  @title = 'New post is posted'
+
+  # Параметры поста
+  @title = 'Создание нового поста'
   @post_title = params[:post_title]
   @post_body = params[:post_body]
 
+  # Проверка на пустоту
+  if @post_title.length <= 0 || @post_body.length <= 0
+    @error = "Вы должны заполнить все поля"
+    return erb :new
+  end
+
+  # Сохранение поста
   get_db
   @db.execute 'INSERT INTO Posts (post_title, post_body) VALUES (?, ?)', [@post_title, @post_body]
   @db.close
@@ -64,6 +77,7 @@ post '/new' do
   erb :posted
 end
 
+# Страница админ панели
 get '/admin' do
   @title = "Admin Panel"
 

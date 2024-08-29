@@ -118,6 +118,9 @@ get "/details/:post_id" do
   results = @db.execute "select * from Posts where id = ?", [post_id]
   @row = results[0]
 
+  # Выбираем комментарии для поста
+  @comments = @db.execute "select * from Comments where post_id = ? order by created_date desc", [post_id]
+
   erb :details
 end
 
@@ -136,6 +139,6 @@ post "/details/:post_id" do
               [comment, post_id]
   @db.close
   
-
-  erb "Comment added to post #{post_id}: #{comment}"
+  # Перенаправление на страницу поста с комментариями
+  redirect to ('/details/' + post_id)
 end

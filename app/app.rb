@@ -23,7 +23,8 @@ end
 # Конфигурация сервера приложения
 configure do
   get_db
-  # create table Messages in database
+  
+  # Создание таблицы Posts в базе данных
   @db.execute 'CREATE TABLE IF NOT EXISTS "Posts"
     (
       "id" INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -31,6 +32,16 @@ configure do
       "post_title" TEXT,
       "post_body" TEXT
     )'
+
+  # Создание таблицы Comments в базе данных
+  @db.execute 'CREATE TABLE IF NOT EXISTS "Comments"
+    (
+      "id" INTEGER PRIMARY KEY AUTOINCREMENT,
+      "created_date" DATE,
+      "post_id" INTEGER,
+      "comment_body" TEXT
+    )'
+
   @db.close
 end
 
@@ -115,7 +126,16 @@ post "/details/:post_id" do
   post_id = params[:post_id]
 
   # Получаем переменную из формы
-  @comment = params[:comment_body]
+  comment = params[:comment_body]
 
-  erb "Comment added to post #{post_id}: #{@comment}"
+  # Сохранение комментария
+  get_db
+  @db.execute "INSERT INTO 
+              Comments (comment_body, post_id, created_date) 
+              VALUES (?, ?, datetime())",
+              [comment, post_id]
+  @db.close
+  
+
+  erb "Comment added to post #{post_id}: #{comment}"
 end

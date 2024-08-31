@@ -1,346 +1,342 @@
-## Урок 29 - введение в Active Record
+## Урок 30
 
-#### Gemfile
+Перенос блога на ActiveRecord
 
-```ruby
-source "https://rubygems.org"
+#### 5 шагов по созданию миграции:
 
-gem "sinatra"
-gem "sinatra-contrib"
-gem "sqlite3"
-gem "activerecord"
-gem "sinatra-activerecord"
+1. подключаем БД
+   
+   ```ruby
+   set :database, "sqlite3.my_database.db"
+   ```
 
-group :development do
-  gem "tux"
-end
-```
+2. создаём модель (класс)
+   
+   ```ruby
+   class Client < ActiveRecord::Base
+   end
+   ```
 
-#### Установка
+3. создаём миграцию
+   
+   ```bash
+   rake db:create_migration NAME=create_clients
+   ```
 
-```bash
-bundle install
-```
-
-gem tux
-
-deploy - развёртывание
-
-#### Подключение базы и ActiveRecord
-
-```ruby
-require 'sinatra'
-require 'sinatra/reloader'
-require 'sinatra/activerecord'
-
-set :database, { adapter: 'sqlite3', database: 'my_database.db' }
-
-get '/' do
-  erb :index
-end
-```
-
-Создадим сущности
-
-```ruby
-class Client < ActiveRecord::Base
-end
-```
-
-В терминале запустить гем tux
-
-```bash
-tux
-```
-
-Список всех сущностей в БД (набрать в tux):
-
-```ruby
-Client.all
-```
-
-### rake
-
-#### Создать Rakefile
-
-```bash
-touch Rakefile
-```
-
-Содержимое Rakefile:
-
-```ruby
-require "./app"
-require "sinatra/activerecord/rake"
-```
-
-> У меня в Debian не заработало, выпадали ошибки. Удалил ruby и поставил всё через rvm - https://rvm.io/
-
-### Install RVM:
-
-```ruby
-sudo apt-get install libgdbm-dev libncurses5-dev automake libtool bison libffi-dev
-gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3 7D2BAF1CF37B13E2069D6956105BD0E739499BDB
-curl -sSL https://get.rvm.io | bash -s stable
-source ~/.rvm/scripts/rvm
-rvm install 2.5.3
-rvm use 2.5.3 --default
-ruby -v
-```
-
-> LINK
-> command line ruby cheat sheets: http://cheat.errtheblog.com/s/rvm
-
-Всё заработало, идём дальше...
-
-#### Список параметров:
-
-```ruby
-rake -T
-```
-
-NOTE: Работает только при наличии Rakefile:
-
-```ruby
-# Rakefile
-
-require "./app"
-require "sinatra/activerecord/rake"
-```
-
-Rakefile произошёл от сишного Makefile
-
-#### 3 команды rake:
-
-создаёт новую миграцию в db/migrate/:
-
-```ruby
-rake db:create_migration NAME=name_of_migration
-```
-
-применяет (выполняет) созданную миграцию:
-
-```ruby
-rake db:migrate
-```
-
-если команда отрабатывает без каких-либо сообщений и база данный пустая, выполнить следующие шаги:
-
-```
-- Добавить в Gemfile: gem "rake"
-- Запустить bundle install
-- В app.rb изменить строку set :database, "sqlite3:barbershop.db"  на set :database, {adapter: "sqlite3", database: "barbershop.db"}
-```
-
-возврат к предыдущей миграции:
-
-```ruby
-rake db:rollback
-```
-
-#### Все команды rake:
-
-```ruby
-rake db:create              # Creates the database from DATABASE_URL or con...
-rake db:create_migration    # Create a migration (parameters: NAME, VERSION)
-rake db:drop                # Drops the database from DATABASE_URL or confi...
-rake db:environment:set     # Set the environment value for the database
-rake db:fixtures:load       # Loads fixtures into the current environment's...
-rake db:migrate             # Migrate the database (options: VERSION=x, VER...
-rake db:migrate:status      # Display status of migrations
-rake db:rollback            # Rolls the schema back to the previous version...
-rake db:schema:cache:clear  # Clears a db/schema_cache.yml file
-rake db:schema:cache:dump   # Creates a db/schema_cache.yml file
-rake db:schema:dump         # Creates a db/schema.rb file that is portable ...
-rake db:schema:load         # Loads a schema.rb file into the database
-rake db:seed                # Loads the seed data from db/seeds.rb
-rake db:setup               # Creates the database, loads the schema, and i...
-rake db:structure:dump      # Dumps the database structure to db/structure.sql
-rake db:structure:load      # Recreates the databases from the structure.sq...
-rake db:version             # Retrieves the current schema version number
-```
-
-#### Миграция - это очередная версия нашей базы данных.
-
-Создадим миграцию:
-
-```bash
-rake db:create_migration NAME=create_clients
-```
-
-Создаётся каталог db/migrate и миграция.
-
-Открываем созданный файл и создаём таблицу в базе данных:
-
-```ruby
-# File db/migrate/389173729_create_clients.rb
-
-class CreateClients < ActiveRecord::Migration[5.2]
-  def change
+4. редактируем миграцию
+   
+   ```ruby
+   class CreateClients < ActiveRecord::Migration[5.2]
+   def change
     create_table :clients do |t|
       t.text :name
       t.text :phone
       t.text :datestamp
       t.text :barber
-
-        t.timestamps
-    end
-  end
-end
-```
-
-> id primary key будет создан автоматически
-
-> t.timestamps создаст 2 дополнительных столбца created_at и updated_at
-> дата создания и обновления сущности
-
-text -> TEXT
-
-string -> VARCHAR(255)
-
-#### Запустить миграцию:
-
-```bash
-rake db:migrate
-```
-
-Мы настроили mapping (ORM - Object Relational Mapper)
-
-Связка ООП с реляционными БД
-
-Добавим таблицу barbers:
-
-```ruby
-# + in app.rb
-
-class Barber < ActiveRecord::Base
-end
-```
-
-Создаём миграцию (bash):
-
-```bash
-rake db:create_migration NAME=create_barbers
-```
-
-Правим миграцию (создаём таблицу и вносим данные):
-
-```ruby
-# db/migrate/37837298_create_barbers.rb
-
-class CreateBarbers < ActiveRecord::Migration[5.2]
-  def change
-    create_table :barbers do |t|
-      t.text :name
-
+   
       t.timestamps
     end
+   end
+   end
+   ```
 
-    Barber.create :name => "Joe Doe"
-    Barber.create :name => "Elon Musk"
-    Barber.create :name => "Alisha Moon"
-    Barber.create :name => "Marie Fooo-bar"
+5. делаем миграцию
+   
+   ```bash
+   rake db:migrate
+   ```
+   
+   Необходимо наличие всех гемов и Rakefile
 
+#### Сохранение в БД через ActiveRecord
+
+##### Ламерский способ:
+
+```ruby
+# + to app.rb
+
+post '/order' do
+  @name = params[:name]
+  @phone = params[:phone]
+  @datestamp = params[:datestamp]
+  @barber = params[:barber]
+
+  c = Client.new
+  c.name = @name
+  c.phone = @phone
+  c.datestamp = @datestamp
+  c.barber = @barber
+  c.save
+
+  erb :sent
+end
+```
+
+##### Способ лучше:
+
+```ruby
+# + to app.rb
+post '/order' do
+  c = Client.new params[:client]
+  c.save
+
+  erb :sent
+end
+```
+
+```ruby
+# + to views/order.erb
+
+<form action="/order" method="POST">
+
+  <p><label for="name">Ваше имя:</label></p>
+  <p><input type="text" name="client[name]" value=""></p>
+
+  <p><label for="phone">Телефон:</label></p>
+  <p><input type="text" name="client[phone]" value=""></p>
+
+  <p><label for="datestamp">Выберите дату:</label></p>
+  <p><input type="text" name="client[datestamp]" value=""></p>
+
+  <p><label for="barber">Парикмахер:</label>
+    <select name="client[barber]">
+      <option value="" selected>Выбрать парикмахера...</option>
+
+      <% @barbers.each do |barber| %>
+      <option value="<%= barber.name %>"><%= barber.name %></option>
+      <% end %>
+
+    </select>
+  </p>
+
+  <br>
+  <p><input type="submit" value="Отправить заявку"></p>
+
+</form>
+```
+
+Т.е. вместо создания переменных из params. мы сократили код до пары строк:
+
+```ruby
+c = Contact.new params[:contact]
+c.save
+```
+
+и в представлении:
+
+```ruby
+<p><input type="text" name="contact[name]" value=""></p>
+<p><textarea rows="10" cols="45" name="contact[comment]"></textarea></p>
+```
+
+> Важное замечание: метод save для новых записей проводит валидацию, если всё правильно, то возвращает true иначе false
+
+#### Настройка валидации:
+
+Можно проверить пустое - не пустое, можно проверить длину
+
+```ruby
+# + to app.rb
+
+class Client < ActiveRecord::Base
+  validates :name, presence: true
+  validates :phone, presence: true
+  validates :datestamp, presence: true
+  validates :barber, presence: true
+end
+```
+
+Проверка в tux:
+
+```bash
+c = Client.new
+c.valid?
+c.errors.count
+c.errors.messages
+```
+
+```ruby
+# + to app.rb
+
+post '/order' do
+  c = Client.new params[:client]
+  c.save
+
+  if c.save
+    erb "<p>Thank you!</p>"
+  else
+    erb "<p>Error</p>"
   end
 end
 ```
 
-Запустим миграцию:
-
-```bash
-rake db:migrate
-```
-
-> Совет от @krdprog:
-> чтобы в командной строке sqlite3 каждый раз не писать, показывать в столбец и с заголовками, создайте в домашней директории файл .sqliterc с содержимым:
-
-```bash
-.headers on
-.mode column
-```
-
-Теперь, это настройки по-умолчанию.
-
-Едем дальше...
-
-Откроем консоль tux
-
-```bash
-tux
-```
-
-И введём:
-
-```bash
-Barber.count
-```
-
-Из этой консоли можно создать дополнительные сущности.
-
-#### Замечание:
+или:
 
 ```ruby
-Barber.create # создаёт в БД
+# + to app.rb
 
-b = Barber.new # создаёт в памяти
-b.save # после этого надо сделать
-```
+post '/order' do
+  c = Client.new params[:client]
+  c.save
 
-Создадим в консоли tux нового парикмахера:
-
-```bash
-Barber.create :name => 'Faz Maz'
-```
-
-или через .new
-
-```bash
-b = Barber.new :name => 'Vasya' # создадим, но не сохраним в базе
-b.new_record? # покажет, новый ли это объект
-b.save # сохраним в базе
-```
-
-Все записи Barber:
-
-```bash
-Barber.all
-```
-
-rake db:migrate надо запускать в каталоге приложения, где Rakefile
-
-> **Изучи ссылку:**
-> Active Record Query Interface — Ruby on Rails Guides; https://guides.rubyonrails.org/active_record_querying.html
-
-Создадим вывод на страницу список наших парикмахеров:
-
-```ruby
-# + in app.rb
-
-get '/' do
-  @barbers = Barber.all
-  erb :index
+  if c.save
+    erb "<p>Thank you!</p>"
+  else
+    @error = c.errors.full_messages.first
+    erb :order
+  end
 end
 ```
 
 ```ruby
-# + in views/index.erb
+# + views/order.erb
+
+<p style="color: red"><%= @error %></p>
+```
+
+Чтобы сохранять данные в поле формы после перезагрузки страницы при неправильном заполнении, надо сделать так:
+
+```ruby
+# + to app.rb
+
+get '/order' do
+  @c = Client.new
+
+  erb :order
+end
+
+post '/order' do
+  @c = Client.new params[:client]
+  @c.save
+
+  if @c.save
+    erb "<p>Thank you!</p>"
+  else
+    @error = @c.errors.full_messages.first
+    erb :order
+  end
+end
+```
+
+```ruby
+# + to views/order.erb
+
+<p><input type="text" name="client[name]" value="<%= @c.name %>"></p>
+<p><input type="text" name="client[phone]" value="<%= @c.phone %>"></p>
+<p><input type="text" name="client[datestamp]" value="<%= @c.datestamp %>"></p>
+```
+
+Для textarea:
+
+```ruby
+<p><textarea rows="10" cols="45" name="contact[comment]"><%= @c.comment %></textarea></p>
+```
+
+> Ссылка на полный проект Barbershop Sinatra with ActiveRecord:
+> https://github.com/krdprog/barbershop-sinatra-with-activerecord
+
+#### Популярные свойства валидации ActiveRecord:
+
+> Ссылка:
+> Active Record Validations — Ruby on Rails Guides
+> https://guides.rubyonrails.org/active_record_validations.html
+
+- length - length: { minimum: 3 } https://guides.rubyonrails.org/active_record_validations.html#length
+- numericality: true - проверка, введены ли числа
+- inclusion - https://guides.rubyonrails.org/active_record_validations.html#inclusion
+
+> **Домашнее задание:** переписать блог с использованием ActiveRecord
+
+#### Создадим отдельные страницы для каждого парикмахера:
+
+```ruby
+# + to app.rb
+
+get '/barber/:id' do
+  @barber = Barber.find(params[:id])
+
+  erb :barber
+end
+```
+
+```ruby
+# + to views/index.erb
 
 <h2>Список парикмахеров:</h2>
 
 <ul>
 <% @barbers.each do |barber| %>
-  <li><%= barber.name %></li>
+  <li><a href="/barber/<%= barber.id %>"><%= barber.name %></a></li>
 <% end %>
 </ul>
 ```
 
-Сортировка .order:
-
 ```ruby
-@barbers = Barber.order "created_at DESC"
+# + to views/barber.erb
+
+<h2>Barber page</h2>
+
+<p>Name: <%= @barber.name %></p>
 ```
 
-Домашнее задание:
+> Find в ActiveRecord:
+> https://guides.rubyonrails.org/active_record_querying.html
 
-1. сделать сохранение записи к парикмахеру в БД с помощью ActiveRecord
-2. сделать сущность Contact и на странице /contacts сохранять в БД данные с помощью ActiveRecord
+#### Показать записавшихся в обратном порядке (кто свежий - наверху):
+
+```ruby
+# + to app.rb
+
+get '/clients' do
+  @clients = Client.order('created_at DESC')
+
+  erb :clients
+end
+
+get '/clients/:id' do
+  @client = Client.find(params[:id])
+
+  erb :client
+end
+```
+
+```ruby
+# + to views/clients.erb
+
+<h2>Список записавшихся</h2>
+
+<table border="1" cellpadding="10" cellpadding="0">
+  <tr>
+    <th>Name</th>
+    <th>Phone</th>
+    <th>Date</th>
+    <th>Barber</th>
+  </tr>
+
+<% @clients.each do |client| %>
+  <tr>
+    <td><a href="/clients/<%= client.id %>"><%= client.name %></a></td>
+    <td><%= client.phone %></td>
+    <td><%= client.datestamp %></td>
+    <td><%= client.barber %></td>
+  </tr>
+<% end %>
+</table>
+```
+
+```ruby
+# + to views/client.erb
+
+<h2>Страница клиента:</h2>
+
+<p><strong>Имя:</strong> <%= @client.name %></p>
+
+<p><a href="/clients"><< назад к списку записавшихся</a></p>
+```
+
+### Домашнее задание
+
+- Добавить выпадающий список с парикмахерами. (сделано)  
+- Сделать прошлый блог с помощью ActiveRecord  
+- Изучить ActiveRecord "one-to-many" (отношение сущностей)  
+- https://guides.rubyonrails.org/association_basics.html  

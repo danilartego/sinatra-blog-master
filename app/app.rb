@@ -13,17 +13,10 @@ def get_db
   return @db
 end
 
-# # Получение данных из базы
-# def get_posts
-#   get_db
-#   @posts = @db.execute "SELECT * FROM Posts"
-#   @db.close
-# end
-
 # Конфигурация сервера приложения
 configure do
   get_db
-  
+
   # Создание таблицы Posts в базе данных
   @db.execute 'CREATE TABLE IF NOT EXISTS "Posts"
     (
@@ -102,7 +95,7 @@ post "/new" do
               [@post_title, @post_body]
 
   post_id = @db.last_insert_row_id
- 
+
   @db.execute "INSERT INTO Users 
               (username, post_id, created_date) 
               VALUES (?, ?, datetime())",
@@ -110,12 +103,11 @@ post "/new" do
   @db.close
 
   # erb :posted
-  redirect to '/posts'
+  redirect to "/posts"
 end
 
 # Страница админ панели
 get "/admin" do
-
   @title = "Панель администратора"
 
   get_db
@@ -127,7 +119,6 @@ end
 
 # Пост с коментариями
 get "/details/:post_id" do
-
   @title = "Детали поста с комментариями"
 
   # Получаем переменную из URL
@@ -141,7 +132,6 @@ get "/details/:post_id" do
   @row_users = @db.execute "select * from Users"
 
   @row_post = row_posts[0]
-
 
   # Выбираем комментарии для поста
   @comments = @db.execute "select * from Comments where post_id = ? order by created_date desc", [post_id]
@@ -161,8 +151,7 @@ post "/details/:post_id" do
   # Валидация введения комментария
   if comment.empty? || username.empty?
     @error = "Вы должны ввести комментарий"
-    redirect to ('/details/' + post_id)
-
+    redirect to ("/details/" + post_id)
   end
 
   # Сохранение комментария и Имя пользователя
@@ -181,9 +170,9 @@ post "/details/:post_id" do
               (username, comment_id, created_date) 
               VALUES (?, ?, datetime())",
               [username, comment_id]
-  
+
   @db.close
-  
+
   # Перенаправление на страницу поста с комментариями
-  redirect to ('/details/' + post_id)
+  redirect to ("/details/" + post_id)
 end
